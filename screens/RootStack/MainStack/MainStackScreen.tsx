@@ -3,13 +3,13 @@ import { createStackNavigator } from "@react-navigation/stack";
 import FeedScreen from "./FeedScreen/FeedScreen.main";
 import DetailScreen from "./DetailScreen/DetailScreen.main";
 import CommentsScreen from "./CommentsScreen/CommentsScreen.main";
-import { SocialModel } from "../../../models/social";
+import { UserModel } from "../../../models/user";
 
 export type MainStackParamList = {
   FeedScreen: undefined;
-  DetailScreen: { social: SocialModel };
-  CommentsScreen: { social: SocialModel };
-  NewCommentScreen: { social: SocialModel };
+  DetailScreen: { user: UserModel };
+  CommentsScreen: { user: UserModel };
+  NewCommentScreen: { user: UserModel };
   NewSocialScreen: undefined;
 };
 

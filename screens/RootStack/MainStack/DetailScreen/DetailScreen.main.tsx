@@ -12,7 +12,7 @@ interface Props {
 }
 
 export default function DetailScreen({ route, navigation }: Props) {
-  const { social } = route.params;
+  const { user } = route.params;
 
   const Bar = () => {
     return (
@@ -28,32 +28,29 @@ export default function DetailScreen({ route, navigation }: Props) {
       <Bar />
       <ScrollView style={styles.container}>
         <View style={styles.view}>
-          <Image style={styles.image} source={{ uri: social.eventImage }} />
+          <Image style={styles.image} source={{ uri: user.userImage }} />
           <Text style={{ ...styles.h1, marginVertical: 10 }}>
-            {social.eventName}
+            {user.userNickname}
           </Text>
           <Text style={{ ...styles.subtitle, marginBottom: 5 }}>
-            {"Major: " + social.major}
+            {"Location: " + user.userLocation}
           </Text>
           <Text style={{ ...styles.subtitle, marginTop: 5, marginBottom: 20 }}>
-            {"Description: " + social.eventDescription}
+            {"Type of Case: " + user.userTypeOfCase}
           </Text>
           <Text style={{ ...styles.subtitle, marginTop: 0, marginBottom: 20 }}>
-            {"Commitments: " + social.commitments}
+            {"About: " + user.userAbout}
           </Text>
-          <Text style={{ ...styles.subtitle, marginTop: 0, marginBottom: 20 }}>
-            {"Upvotes: " + social.upvotes}
-          </Text>
-          <Button
+          {/* <Button
             color="blue"
             onPress={() =>
               navigation.navigate("CommentsScreen", {
                 social: social,
               })
             }
-          >
-            {"Comments"}
-          </Button>
+          > */}
+            {/* {"Comments"}
+          </Button> */}
         </View>
       </ScrollView>
     </>

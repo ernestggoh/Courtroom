@@ -14,7 +14,7 @@ import { styles } from "./NewSocialScreen.styles";
 
 import firebase from "firebase/app";
 import "firebase/firestore";
-import { SocialModel } from "../../../models/social";
+import { UserModel } from "../../../models/user";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../RootStackScreen";
 import * as WebBrowser from "expo-web-browser";
@@ -22,14 +22,16 @@ interface Props {
   navigation: StackNavigationProp<RootStackParamList, "NewSocialScreen">;
 }
 
+
+// I am doing for lawyers only, we need to explore cilents too
+
 export default function NewSocialScreen({ navigation }: Props) {
   // Event details.
-  const [eventName, setEventName] = useState("");
-  const [units, setUnits] = useState("");
-  const [eventDescription, setEventDescription] = useState("");
-  const [eventImage, setEventImage] = useState<string | undefined>(undefined);
-  const [major, setMajor] = useState("");
-  const [commitments, setCommitments] = useState("");
+  const [nickname, setNickname] = useState("");
+  const [about, setAbout] = useState("");
+  const [image, setImage] = useState<string | undefined>(undefined);
+  const [typeOfCase, setTypeOfCase] = useState("");
+  const [location, setLocation] = useState("");
   const [visible, setVisible] = useState(false);
   // Snackbar.
   const [message, setMessage] = useState("");
@@ -37,12 +39,12 @@ export default function NewSocialScreen({ navigation }: Props) {
   const [loading, setLoading] = useState(false);
   const [link, setLink] = useState<any | null>(null);
 
-  const handlePressButtonAsync = async () => {
-    let result = await WebBrowser.openBrowserAsync(
-      "https://calcentral.berkeley.edu/dashboard"
-    );
-    setLink(result);
-  };
+  // const handlePressButtonAsync = async () => {
+  //   let result = await WebBrowser.openBrowserAsync(
+  //     "https://calcentral.berkeley.edu/dashboard"
+  //   );
+  //   setLink(result);
+  // };
   // Code for ImagePicker (from docs)
   useEffect(() => {
     (async () => {
@@ -68,7 +70,7 @@ export default function NewSocialScreen({ navigation }: Props) {
     });
     console.log("done");
     if (!result.cancelled) {
-      setEventImage(result.uri);
+      setImage(result.uri);
     }
   };
 
@@ -81,20 +83,20 @@ export default function NewSocialScreen({ navigation }: Props) {
 
   // This method is called AFTER all fields have been validated.
   const saveEvent = async () => {
-    if (!eventName) {
-      showError("Please enter an event name.");
+    if (!nickname) {
+      showError("Please enter a nickname.");
       return;
-    } else if (!units) {
-      showError("Please enter the number of units.");
+    } else if (!location) {
+      showError("Please enter your location.");
       return;
-    } else if (!major) {
-      showError("Please enter a major.");
+    } else if (!typeOfCase) {
+      showError("Please enter your type of case.");
       return;
-    } else if (!eventDescription) {
-      showError("Please enter an event description.");
+    } else if (!about) {
+      showError("Please enter description for About.");
       return;
-    } else if (!eventImage) {
-      showError("Please choose an event image.");
+    } else if (!image) {
+      showError("Please choose a profile picture.");
       return;
     } else {
       setLoading(true);
@@ -104,30 +106,27 @@ export default function NewSocialScreen({ navigation }: Props) {
       // Firestore wants a File Object, so we first convert the file path
       // saved in eventImage to a file object.
       console.log("getting file object");
-      const object: Blob = (await getFileObjectAsync(eventImage)) as Blob;
+      const object: Blob = (await getFileObjectAsync(image)) as Blob;
       // Generate a brand new doc ID by calling .doc() on the socials node.
-      const socialRef = firebase.firestore().collection("socials").doc();
+      const userRef = firebase.firestore().collection("lawyers").doc();
       console.log("putting file object");
       const result = await firebase
         .storage()
         .ref()
-        .child(socialRef.id + ".jpg")
+        .child(userRef.id + ".jpg")
         .put(object);
       console.log("getting download url");
       const downloadURL = await result.ref.getDownloadURL();
-      const doc: SocialModel = {
-        eventName: eventName,
-        units: units,
-        major: major,
-        commitments: commitments,
-        eventDescription: eventDescription,
-        eventImage: downloadURL,
+      const doc: UserModel = {
+        userNickname: nickname,
+        userAbout: about,
+        userTypeOfCase: typeOfCase,
+        userLocation: location,
+        userImage: downloadURL,
         owner: firebase.auth().currentUser!.uid,
-        interested: {},
-        upvotes: 0,
       };
       console.log("setting download url");
-      await socialRef.set(doc);
+      await userRef.set(doc);
       setLoading(false);
       navigation.goBack();
     } catch (error) {
@@ -140,7 +139,7 @@ export default function NewSocialScreen({ navigation }: Props) {
     return (
       <Appbar.Header>
         <Appbar.Action onPress={navigation.goBack} icon="close" />
-        <Appbar.Content title="Schedule Rater" />
+        <Appbar.Content title="Courtroom" />
       </Appbar.Header>
     );
   };
@@ -150,40 +149,33 @@ export default function NewSocialScreen({ navigation }: Props) {
       <Bar />
       <View style={{ ...styles.container, padding: 20 }}>
         <TextInput
-          label="Schedule Name"
-          value={eventName}
-          onChangeText={(name) => setEventName(name)}
+          label="Nickname"
+          value={nickname}
+          onChangeText={(name) => setNickname(name)}
           style={{ backgroundColor: "white", marginBottom: 10 }}
         />
         <TextInput
-          label="Schedule Description"
-          value={eventDescription}
+          label="About"
+          value={about}
           multiline={true}
-          onChangeText={(desc) => setEventDescription(desc)}
+          onChangeText={(desc) => setAbout(desc)}
           style={{ backgroundColor: "white", marginBottom: 10 }}
         />
         <TextInput
-          label="Major"
-          value={major}
-          onChangeText={(major) => setMajor(major)}
+          label="Location"
+          value={location}
+          onChangeText={(major) => setLocation(major)}
           style={{ backgroundColor: "white", marginBottom: 10 }}
         />
         <TextInput
-          label="Units"
-          keyboardType="numeric"
-          value={units}
-          onChangeText={(text) => setUnits(text)}
+          label="Type of Case"
+          value={typeOfCase}
+          onChangeText={(text) => setTypeOfCase(text)}
           style={{ backgroundColor: "white", marginBottom: 10 }}
         />
-        <TextInput
-          label="Other Commitments"
-          value={commitments}
-          onChangeText={(text) => setCommitments(text)}
-          style={{ backgroundColor: "white", marginBottom: 10 }}
-        />
-        <Button onPress={handlePressButtonAsync}>Open WebBrowser</Button>
+        {/* <Button onPress={handlePressButtonAsync}>Open WebBrowser</Button> */}
         <Button mode="outlined" onPress={pickImage} style={{ marginTop: 20 }}>
-          {eventImage ? "Change Image" : "Pick an Image"}
+          {image ? "Change Image" : "Pick an Image"}
         </Button>
         <Button
           mode="contained"
