@@ -6,10 +6,10 @@ import "firebase/firestore";
 import { UserModel } from "../../../../models/user.js";
 import { styles } from "./FeedScreen.styles";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { MainStackParamList } from "../MainStackScreen.js";
+import { FeedStackParamList } from "../MainStackScreen.js";
 
 interface Props {
-  navigation: StackNavigationProp<MainStackParamList, "FeedScreen">;
+  navigation: StackNavigationProp<FeedStackParamList, "FeedScreen">;
 }
 
 export default function FeedScreen({ navigation }: Props) {
@@ -80,7 +80,7 @@ export default function FeedScreen({ navigation }: Props) {
         />
         <Appbar.Content title="Courtroom" />
         <Appbar.Action
-          icon="plus"
+          icon="account"
           onPress={() => {
             navigation.navigate("NewSocialScreen");
           }}

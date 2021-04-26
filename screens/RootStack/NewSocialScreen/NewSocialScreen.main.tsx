@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Platform, View } from "react-native";
-import { Appbar, TextInput, Snackbar, Button } from "react-native-paper";
+import { Appbar, TextInput, Snackbar, Button, RadioButton, Text } from "react-native-paper";
 import { getFileObjectAsync } from "../../../Utils";
 
 // See https://github.com/mmazzarolo/react-native-modal-datetime-picker
@@ -17,7 +17,7 @@ import "firebase/firestore";
 import { UserModel } from "../../../models/user";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../RootStackScreen";
-import * as WebBrowser from "expo-web-browser";
+// import * as WebBrowser from "expo-web-browser";
 interface Props {
   navigation: StackNavigationProp<RootStackParamList, "NewSocialScreen">;
 }
@@ -38,14 +38,132 @@ export default function NewSocialScreen({ navigation }: Props) {
   // Loading state for submit button
   const [loading, setLoading] = useState(false);
   const [link, setLink] = useState<any | null>(null);
-
+  const [lawyerProfileExists, setLawyerProfileExists] = useState(false);
+  const [cilentProfileExists, setCilentProfileExists] = useState(false);
+  const [isCilent, setIsCilent] = useState<boolean | null>(null);
+  const [cilentProfiles, setCilentProfiles] = useState<string[]>([]);
+  const [lawyerProfiles, setLawyerProfiles] = useState<string[]>([]);
+  const [checked, setChecked] = React.useState("first");
+  var do1 = true;
   // const handlePressButtonAsync = async () => {
   //   let result = await WebBrowser.openBrowserAsync(
   //     "https://calcentral.berkeley.edu/dashboard"
   //   );
   //   setLink(result);
   // };
+
+
+  const currentUserId = firebase.auth().currentUser!.uid;
+  const db = firebase.firestore();
+  // const getCilents = async () => {
+  //   console.log("picking image");
+  //   await   db.collection("lawyers").where("owner", "==", currentUserId)
+  //   .get()
+  //   .then((querySnapshot) => {
+  //       var lawyerProfilesIDs: string[] = [];
+  //       querySnapshot.forEach((lawyer) => {
+  //           // doc.data() is never undefined for query doc snapshots
+  //           // console.log(doc.id, " => ", doc.data());
+  //           const newLawyer = lawyer.data() as UserModel;
+  //           setLawyerProfileExists(true);
+  //           setNickname(newLawyer.userNickname);
+  //           setAbout(newLawyer.userAbout);
+  //           setImage(newLawyer.userImage);
+  //           setTypeOfCase(newLawyer.userTypeOfCase);
+  //           setLocation(newLawyer.userLocation);
+  //           lawyerProfilesIDs.push(lawyer.id);
+  //       });
+  //       setLawyerProfiles(lawyerProfilesIDs);
+  //   })
+  //   .catch((error) => {
+  //       console.log("Error getting documents: ", error);
+  //   });
+  // };
+  // getCilents();
+  // if (do1) {
+  //   console.log("doing this 1");
+  //   db.collection("lawyers").where("owner", "==", currentUserId)
+  //     .get()
+  //     .then((querySnapshot) => {
+  //         var lawyerProfilesIDs: string[] = [];
+  //         querySnapshot.forEach((lawyer) => {
+  //             // doc.data() is never undefined for query doc snapshots
+  //             // console.log(doc.id, " => ", doc.data());
+  //             const newLawyer = lawyer.data() as UserModel;
+  //             console.log(newLawyer.userNickname);
+  //             setLawyerProfileExists(true);
+  //             setNickname(newLawyer.userNickname);
+  //             setAbout(newLawyer.userAbout);
+  //             setImage(newLawyer.userImage);
+  //             setTypeOfCase(newLawyer.userTypeOfCase);
+  //             setLocation(newLawyer.userLocation);
+  //             lawyerProfilesIDs.push(lawyer.id);
+  //         });
+  //         setLawyerProfiles(lawyerProfilesIDs);
+  //     })
+  //     .catch((error) => {
+  //         console.log("Error getting documents: ", error);
+  //     });
+  //   do1 = false;
+  // }
+
+  console.log("doing this 1");
+  
+  useEffect(() => {
+    const db = firebase.firestore();
+    const unsubscribe = db
+      .collection("lawyers")
+      .where("owner", "==", currentUserId)
+      .onSnapshot((querySnapshot) => {
+        var lawyerProfilesIDs: string[] = [];
+        querySnapshot.forEach((lawyer) => {
+            // doc.data() is never undefined for query doc snapshots
+            // console.log(doc.id, " => ", doc.data());
+            const newLawyer = lawyer.data() as UserModel;
+            console.log(newLawyer.userNickname);
+            setLawyerProfileExists(true);
+            setNickname(newLawyer.userNickname);
+            setAbout(newLawyer.userAbout);
+            setImage(newLawyer.userImage);
+            setTypeOfCase(newLawyer.userTypeOfCase);
+            setLocation(newLawyer.userLocation);
+            setChecked("lawyer");
+            lawyerProfilesIDs.push(lawyer.id);
+        });
+        setLawyerProfiles(lawyerProfilesIDs);
+        console.log(lawyerProfilesIDs);
+      });
+    return unsubscribe;
+  }, []);
+  
+  useEffect(() => {
+    const db = firebase.firestore();
+    const unsubscribe = db
+      .collection("cilents")
+      .where("owner", "==", currentUserId)
+      .onSnapshot((querySnapshot) => {
+        var cilentProfilesIDs: string[] = [];
+      querySnapshot.forEach((cilents) => {
+          // doc.data() is never undefined for query doc snapshots
+          // console.log(doc.id, " => ", doc.data());
+          const newCilent = cilents.data() as UserModel;
+          setCilentProfileExists(true);
+          setNickname(newCilent.userNickname);
+          setAbout(newCilent.userAbout);
+          setImage(newCilent.userImage);
+          setTypeOfCase(newCilent.userTypeOfCase);
+          setLocation(newCilent.userLocation);
+          setChecked("cilent");
+          cilentProfilesIDs.push(cilents.id);
+      });
+      setCilentProfiles(cilentProfilesIDs);
+      });
+    return unsubscribe;
+  }, []);
+
+
   // Code for ImagePicker (from docs)
+
   useEffect(() => {
     (async () => {
       if (Platform.OS !== "web") {
@@ -73,7 +191,7 @@ export default function NewSocialScreen({ navigation }: Props) {
       setImage(result.uri);
     }
   };
-
+  
   // Code for SnackBar (from docs)
   const onDismissSnackBar = () => setVisible(false);
   const showError = (error: string) => {
@@ -103,6 +221,27 @@ export default function NewSocialScreen({ navigation }: Props) {
     }
 
     try {
+      // Delete all existing portfolios
+      // deleting cilent
+      // cilentProfiles.forEach(cilentProfile => {
+      //   db.collection("cilents").doc(cilentProfile).delete().then(() => {
+      //     console.log("Document successfully deleted!");
+      //   }).catch((error) => {
+      //       console.error("Error removing document: ", error);
+      //   });
+      // });
+      // deleting lawyers
+
+      lawyerProfiles.forEach(lawyerProfile => {
+        console.log("printing for deletion");
+        console.log(lawyerProfile);
+        db.collection("lawyers").doc(lawyerProfile).delete().then(() => {
+          console.log("Document successfully deleted!");
+        }).catch((error) => {
+            console.error("Error removing document: ", error);
+        });
+      });
+
       // Firestore wants a File Object, so we first convert the file path
       // saved in eventImage to a file object.
       console.log("getting file object");
@@ -139,7 +278,7 @@ export default function NewSocialScreen({ navigation }: Props) {
     return (
       <Appbar.Header>
         <Appbar.Action onPress={navigation.goBack} icon="close" />
-        <Appbar.Content title="Courtroom" />
+        <Appbar.Content title="Your Portfolio" />
       </Appbar.Header>
     );
   };
@@ -173,6 +312,16 @@ export default function NewSocialScreen({ navigation }: Props) {
           onChangeText={(text) => setTypeOfCase(text)}
           style={{ backgroundColor: "white", marginBottom: 10 }}
         />
+        <RadioButton.Group onValueChange={newValue => setChecked(newValue)} value={checked}>
+        <View>
+          <Text>Cilent</Text>
+          <RadioButton value="cilent" color="red"/>
+        </View>
+        <View>
+          <Text>Lawyer</Text>
+          <RadioButton value="lawyer" color="red"/>
+        </View>
+      </RadioButton.Group>
         {/* <Button onPress={handlePressButtonAsync}>Open WebBrowser</Button> */}
         <Button mode="outlined" onPress={pickImage} style={{ marginTop: 20 }}>
           {image ? "Change Image" : "Pick an Image"}
@@ -183,7 +332,7 @@ export default function NewSocialScreen({ navigation }: Props) {
           style={{ marginTop: 20 }}
           loading={loading}
         >
-          Save Event
+          Update Portfolio
         </Button>
         <Snackbar
           duration={3000}
