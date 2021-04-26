@@ -1,9 +1,10 @@
 import { StackNavigationProp } from "@react-navigation/stack";
 import React, { useState } from "react";
-import { SafeAreaView, StyleSheet, ScrollView } from "react-native";
-import { Appbar, TextInput, Snackbar, Button } from "react-native-paper";
+import { Image,SafeAreaView, StyleSheet, ScrollView, View } from "react-native";
+import { Text, Appbar, TextInput, Snackbar, Button } from "react-native-paper";
 import { AuthStackParamList } from "./AuthStackScreen";
 import firebase from "firebase";
+// import { Text } from "react-native-paper/lib/typescript/components/Avatar/Avatar";
 
 interface Props {
   navigation: StackNavigationProp<AuthStackParamList, "SignInScreen">;
@@ -66,22 +67,59 @@ export default function SignInScreen({ navigation }: Props) {
     }
   };
 
+  /** -- removed from return to fit Figma design
+   * <Appbar.Header dark={true}>
+        <Appbar.Content title="CourtRoom" />
+        </Appbar.Header>  
+        
+        
+        -- can be used for adding Social Logins, but we will not be using it for now
+        <View style= {{ flexDirection:"row", justifyContent: 'center' , marginTop: 40}}>
+            <View style={{marginHorizontal: 0}}>
+            < Text style={{backgroundColor: '#1B68FF', height: 2, width: 120, marginTop: 7}}> </Text>
+            </View>
+            <View>
+            <Text style={styles.socialText}>Social Login</Text>
+            </View>
+            <View>
+              <Text style={{backgroundColor: '#1B68FF', height: 2, width: 120, marginTop: 7}}> </Text>
+            </View>
+          </View>
+
+          <View style= {{ flexDirection:"row", justifyContent: 'center' , marginTop: 20}}>
+            <View style={{marginHorizontal: 20, marginTop: 5}}>
+              <Text>Facebook</Text>
+            </View>
+            <View style={{marginHorizontal: 20, marginTop: 5}}>
+              <Text>Instagram</Text>
+              </View>
+            <View style={{marginHorizontal: 20, marginTop: 5}}>
+              <Text>Twitter</Text>
+            </View>
+          </View>
+        
+        */
+
   return (
     <>
-      <Appbar.Header dark={true}>
-        <Appbar.Content title="Sign In" />
-      </Appbar.Header>
+      
       <SafeAreaView style={styles.container}>
+        <Text style={{marginLeft:20, fontSize: 20, }}>Courtroom</Text>
         <ScrollView
           style={styles.container}
           keyboardShouldPersistTaps="never"
           alwaysBounceVertical={false}
         >
+          <Text style={{marginLeft:20, fontSize: 25, textAlign: 'center'}}>Welcome Back!</Text>
+          <View style={{justifyContent: 'center', alignItems:'center', marginTop: 20}}>
+            <Image source={require('./LogoBriefcase.png')} style={{width: 50,
+    height: 50}}></Image>
+        </View>  
           <TextInput
             label="Email"
             value={userEmail}
             onChangeText={(text) => setUserEmail(text)}
-            style={{ backgroundColor: "white", marginBottom: 10 }}
+            style={{ backgroundColor: "white", marginBottom: 10, marginTop: 30 }}
           />
           <TextInput
             label="Password"
@@ -91,27 +129,38 @@ export default function SignInScreen({ navigation }: Props) {
             style={{ backgroundColor: "white", marginBottom: 10 }}
           />
           <Button
-            mode="contained"
-            onPress={signIn}
-            style={{ marginTop: 20 }}
-            loading={loading}
-            dark={true}
-          >
-            Sign In
-          </Button>
-          <Button
-            onPress={() => navigation.navigate("SignUpScreen")}
-            style={{ marginTop: 20 }}
-          >
-            CREATE AN ACCOUNT
-          </Button>
-          <Button
             color="#bfbfbf"
             onPress={() => resetPassword()}
-            style={{ marginTop: 0 }}
+            style={styles.resetPass}
           >
             RESET PASSWORD
           </Button>
+          <Button
+            mode="contained"
+            onPress={signIn}
+            style={{ marginTop: 40 }}
+            loading={loading}
+            dark={true}
+          >
+            Login
+          </Button>
+          
+      
+
+          <View style= {{ flexDirection:"row", justifyContent: 'flex-start' , marginTop: 5, marginBottom:10, marginLeft: 3}}>
+            <View style={{marginHorizontal: 0, marginTop: 9}}>
+              <Text>Don't have an account?</Text>
+            </View>
+            <Button
+            onPress={() => navigation.navigate("SignUpScreen")}
+            style={{ marginTop: 0 }}
+          >
+          Sign Up
+          </Button>
+            
+          </View>
+
+          
         </ScrollView>
         <Snackbar
           visible={visible}
@@ -127,8 +176,22 @@ export default function SignInScreen({ navigation }: Props) {
 
 const styles = StyleSheet.create({
   container: {
+    marginTop:20,
     flex: 1,
     padding: 32,
     backgroundColor: "#ffffff",
   },
+  socialText: {
+    height: 30,
+    marginLeft: 5,
+    marginRight: 5,
+    textAlign: 'center',
+    color: '#1B68FF',
+    fontSize: 15
+  }, 
+  resetPass: {
+    fontSize: 50,
+    marginTop: 0,
+    
+  }
 });
