@@ -106,7 +106,7 @@ export default function FeedScreen({ navigation, route }: Props) {
         />
         <Appbar.Content title="Courtroom" />
         <Appbar.Action
-          icon="plus"
+          icon="account"
           onPress={() => {
             navigation.navigate("NewSocialScreen");
           }}

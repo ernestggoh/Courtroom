@@ -1,6 +1,6 @@
 import { StackNavigationProp } from "@react-navigation/stack";
 import React, { useState } from "react";
-import { SafeAreaView, StyleSheet, ScrollView } from "react-native";
+import { Text, SafeAreaView, StyleSheet, ScrollView } from "react-native";
 import { Appbar, TextInput, Snackbar, Button } from "react-native-paper";
 import { AuthStackParamList } from "./AuthStackScreen";
 import firebase from "firebase";
@@ -45,17 +45,22 @@ export default function SignUpScreen({ navigation }: Props) {
     }
   };
 
-  return (
-    <>
-      <Appbar.Header dark={true}>
+  /** -- removed for aesthetic purposes
+   * <Appbar.Header dark={true}>
         <Appbar.Content title="Create an Account" />
       </Appbar.Header>
+   */
+
+  return (
+    <>
       <SafeAreaView style={styles.container}>
+        <Text style={{marginLeft:20, fontSize: 20, }}>Courtroom</Text>
         <ScrollView
           style={styles.container}
           keyboardShouldPersistTaps="never"
           alwaysBounceVertical={false}
         >
+          <Text style={{marginTop:20, fontSize: 25, textAlign: 'center'}}> Sign Up </Text>
           <TextInput
             label="Email"
             value={userEmail}
