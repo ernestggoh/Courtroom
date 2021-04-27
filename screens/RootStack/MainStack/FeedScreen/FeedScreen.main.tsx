@@ -8,14 +8,19 @@ import { styles } from "./FeedScreen.styles";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { MainStackParamList } from "../MainStackScreen.js";
 
+import { TabRouter } from "@react-navigation/routers";
+import { RouteProp } from "@react-navigation/native";
+
 interface Props {
   navigation: StackNavigationProp<MainStackParamList, "FeedScreen">;
+  route: RouteProp<MainStackParamList, "FeedScreen">;
 }
 
-export default function FeedScreen({ navigation }: Props) {
+export default function FeedScreen({ navigation, route }: Props) {
   // List of user objects
   // I am starting with Cilent Point of View, displaying Lawyers
   /*TODO insert if-else clause to deal with lawyer point of view */
+  const [filteredLawyers, setFilteredLawyers] = useState<UserModel[]>([]);
   const [lawyers, setLawyers] = useState<UserModel[]>([]);
   const [search, setSearch] = useState("");
 
@@ -34,12 +39,29 @@ export default function FeedScreen({ navigation }: Props) {
           newLawyers.push(newLawyer);
         });
         setLawyers(newLawyers);
+        setFilteredLawyers(newLawyers);
       });
     return unsubscribe;
   }, []);
 
+  useEffect(() => {
+    if (route.params?.updatedLawyers) {
+      setFilteredLawyers(route.params.updatedLawyers);
+    }
+  }, [route.params?.updatedLawyers]);
+
   const deleteSocial = (social: UserModel) => {
     firebase.firestore().collection("socials").doc(social.id).delete();
+  };
+
+  const selectedSortButton = () => {
+    navigation.navigate("SortScreen", { lawyerList: filteredLawyers });
+  };
+  const selectedSavedButton = () => {
+    navigation.navigate("SavedScreen", { lawyerList: lawyers });
+  };
+  const selectedFilterButton = () => {
+    navigation.navigate("FilterScreen", { lawyerList: lawyers });
   };
 
   const renderSocial = ({ item }: { item: UserModel }) => {
@@ -59,8 +81,12 @@ export default function FeedScreen({ navigation }: Props) {
         <Card onPress={onPress} style={{ margin: 16 }}>
           <Card.Title
             title={item.userNickname}
-            subtitle={item.userLocation + " • " + item.userTypeOfCase + " Units"}
-            left={(props) => <Avatar.Image size={50} source={{ uri: item.userImage }} />}
+            subtitle={
+              item.userLocation + " • " + item.userTypeOfCase + " Units"
+            }
+            left={(props) => (
+              <Avatar.Image size={50} source={{ uri: item.userImage }} />
+            )}
           />
         </Card>
       );
@@ -110,8 +136,13 @@ export default function FeedScreen({ navigation }: Props) {
           onChangeText={setSearch}
           value={search}
         />
+        <View style={{ flexDirection: "row", alignSelf: "center" }}>
+          <Button onPress={selectedSortButton}>Sort</Button>
+          <Button onPress={selectedFilterButton}>Filter</Button>
+        </View>
+        <Button onPress={selectedSavedButton}>Saved Users</Button>
         <FlatList
-          data={lawyers}
+          data={filteredLawyers}
           renderItem={renderSocial}
           keyExtractor={(_, index) => "key-" + index}
           ListEmptyComponent={ListEmptyComponent}

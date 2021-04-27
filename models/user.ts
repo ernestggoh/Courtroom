@@ -6,5 +6,9 @@ export interface UserModel {
   userImage: string;
   userTypeOfCase: string;
   userLocation: string;
+  userType: string;
+  interested: {
+    [key: string]: boolean;
+  };
   owner: string;
 }
