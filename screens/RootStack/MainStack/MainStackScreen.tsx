@@ -14,7 +14,7 @@ export type MainStackParamList = {
   FeedScreen: { updatedLawyers: any } | undefined;
   DetailScreen: { user: UserModel };
   CommentsScreen: { user: UserModel };
-  NewCommentScreen: { user: UserModel };
+  NewCommentScreen: any;
   NewSocialScreen: undefined;
   FilterScreen: { lawyerList: any };
   SortScreen: { lawyerList: any };
