@@ -250,6 +250,9 @@ export default function NewSocialScreen({ navigation }: Props) {
           onChangeText={(name) => setNickname(name)}
           style={{ backgroundColor: "white", marginBottom: 10 }}
         />
+        <Button mode="outlined" onPress={pickImage} style={{ marginTop: 10, borderRadius: 10, borderWidth: 1, borderColor: "#000000", }}>
+          {image ? <Text>Change Profile Image</Text> : "Pick a Profile Image"}
+        </Button>
         <TextInput
           label="Pro Bono/Public Defender/Client"
           value={type}
@@ -276,39 +279,31 @@ export default function NewSocialScreen({ navigation }: Props) {
           style={{ backgroundColor: "white", marginBottom: 10 }}
         /> */}
         <RadioButton.Group onValueChange={newValue => setCased(newValue)} value={cased}>
-        <View>
+        <View style={{marginTop: 10}}>
           <Text>What Type of Case?</Text>
         </View>
-        <View>
-          <Text>Civil</Text>
-          <RadioButton value="Civil" color="red"/>
-        </View>
-        <View>
-          <Text>Criminal</Text>
-          <RadioButton value="Criminal" color="red"/>
-        </View>
-        <View>
-          <Text>Immigration</Text>
-          <RadioButton value="Immigration" color="red"/>
+        <View style={{flexDirection: "row", borderColor: "#000000", borderWidth: 1, borderRadius: 10, marginTop: 5, marginBottom: 5}}>
+          <Text style={{alignSelf: "center", marginLeft: 20}} >Civil</Text>
+          <RadioButton value="Civil" color="#00F0FF"/>
+          <Text style={{ alignSelf: "center", marginLeft: 45}}>Criminal</Text>
+          <RadioButton value="Criminal" color="#00F0FF"/>
+          <Text style={{alignSelf: "center", marginLeft: 45}}>Immigration</Text>
+          <RadioButton value="Immigration" color="#00F0FF"/>
         </View>
       </RadioButton.Group>
         <RadioButton.Group onValueChange={newValue => setChecked(newValue)} value={checked}>
-        <View>
-          <Text>Are you a Cilent/Lawyer?</Text>
+        <View style={{marginTop: 15}}>
+          <Text>Are you a Client or Lawyer?</Text>
         </View>
-        <View>
-          <Text>Cilent</Text>
-          <RadioButton value="cilent" color="red"/>
-        </View>
-        <View>
-          <Text>Lawyer</Text>
-          <RadioButton value="lawyer" color="red"/>
+        <View style={{flexDirection: "row", borderColor: "#000000", borderWidth: 1, borderRadius: 10, marginTop: 5, marginBottom: 5}}>
+          <Text style={{marginTop: 10, marginLeft: 10}}>Client</Text>
+          <RadioButton value="cilent" color="#00F0FF" uncheckedColor="red"/>
+
+          <Text style={{marginLeft: 45, marginTop: 10}}>Lawyer</Text>
+          <RadioButton value="lawyer" color="#00F0FF" uncheckedColor="red"/>
         </View>
       </RadioButton.Group>
         {/* <Button onPress={handlePressButtonAsync}>Open WebBrowser</Button> */}
-        <Button mode="outlined" onPress={pickImage} style={{ marginTop: 20 }}>
-          {image ? "Change Image" : "Pick an Image"}
-        </Button>
         <Button
           mode="contained"
           onPress={saveEvent}
