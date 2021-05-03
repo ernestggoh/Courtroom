@@ -3,8 +3,11 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import React from "react";
 import { ScrollView, Image, Text, View } from "react-native";
 import { Appbar, Button } from "react-native-paper";
+import { UserModel } from "../../../../models/user";
 import { MainStackParamList } from "../MainStackScreen";
 import { styles } from "./DetailScreen.styles";
+import firebase from "firebase/app";
+import "firebase/firestore";
 
 interface Props {
   navigation: StackNavigationProp<MainStackParamList, "DetailScreen">;
@@ -13,12 +16,43 @@ interface Props {
 
 export default function DetailScreen({ route, navigation }: Props) {
   const { user } = route.params;
+  const currentUserId = firebase.auth().currentUser!.uid;
+
+  const toggleInterested = (user: UserModel) => {
+    if (!user.interested) {
+      user.interested = {};
+    }
+    if (user.interested[currentUserId]) {
+      user.interested[currentUserId] = false;
+    } else {
+      user.interested[currentUserId] = true;
+    }
+
+    firebase
+      .firestore()
+      .collection("lawyers")
+      .doc(user.id)
+      .set({
+        ...user,
+        id: null,
+      })
+      .then(() => {})
+      .catch((error) => {
+        console.log("Error writing node:", error);
+      });
+  };
 
   const Bar = () => {
     return (
       <Appbar.Header>
         <Appbar.BackAction onPress={() => navigation.navigate("FeedScreen")} />
-        <Appbar.Content title="Schedule Rater" />
+        <Appbar.Content title="Courtroom" />
+        <Appbar.Action
+          icon="star"
+          onPress={() => {
+            toggleInterested(user);
+          }}
+        />
       </Appbar.Header>
     );
   };
@@ -49,7 +83,7 @@ export default function DetailScreen({ route, navigation }: Props) {
               })
             }
           > */}
-            {/* {"Comments"}
+          {/* {"Comments"}
           </Button> */}
         </View>
       </ScrollView>

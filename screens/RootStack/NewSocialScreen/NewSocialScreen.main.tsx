@@ -17,11 +17,14 @@ import "firebase/firestore";
 import { UserModel } from "../../../models/user";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../RootStackScreen";
+<<<<<<< HEAD
+//import * as WebBrowser from "expo-web-browser";
+=======
 // import * as WebBrowser from "expo-web-browser";
+>>>>>>> 46bdbf20b11821d248514b9cada51d2aaf2fd01a
 interface Props {
   navigation: StackNavigationProp<RootStackParamList, "NewSocialScreen">;
 }
-
 
 // I am doing for lawyers only, we need to explore cilents too
 
@@ -33,6 +36,7 @@ export default function NewSocialScreen({ navigation }: Props) {
   const [typeOfCase, setTypeOfCase] = useState("");
   const [location, setLocation] = useState("");
   const [visible, setVisible] = useState(false);
+  const [type, setType] = useState("");
   // Snackbar.
   const [message, setMessage] = useState("");
   // Loading state for submit button
@@ -258,10 +262,12 @@ export default function NewSocialScreen({ navigation }: Props) {
       const downloadURL = await result.ref.getDownloadURL();
       const doc: UserModel = {
         userNickname: nickname,
+        userType: type,
         userAbout: about,
         userTypeOfCase: typeOfCase,
         userLocation: location,
         userImage: downloadURL,
+        interested: {},
         owner: firebase.auth().currentUser!.uid,
       };
       console.log("setting download url");
@@ -291,6 +297,12 @@ export default function NewSocialScreen({ navigation }: Props) {
           label="Nickname"
           value={nickname}
           onChangeText={(name) => setNickname(name)}
+          style={{ backgroundColor: "white", marginBottom: 10 }}
+        />
+        <TextInput
+          label="Pro Bono/Public Defender/Client"
+          value={type}
+          onChangeText={(type) => setType(type)}
           style={{ backgroundColor: "white", marginBottom: 10 }}
         />
         <TextInput

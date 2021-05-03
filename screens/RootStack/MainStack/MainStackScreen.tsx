@@ -1,23 +1,27 @@
 import React from "react";
-import { NavigationContainer } from '@react-navigation/native';
-import { View, Text, TouchableOpacity } from 'react-native';
-import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
+import { NavigationContainer } from "@react-navigation/native";
+import { View, Text, TouchableOpacity } from "react-native";
+import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
 import FeedScreen from "./FeedScreen/FeedScreen.main";
 import DetailScreen from "./DetailScreen/DetailScreen.main";
 import CommentsScreen from "./CommentsScreen/CommentsScreen.main";
+import SavedScreen from "./SavedScreen/SavedScreen.main";
 import { UserModel } from "../../../models/user";
+import { User } from "firebase";
 
-export type FeedStackParamList = {
-  FeedScreen: undefined;
+export type MainStackParamList = {
+  FeedScreen: { updatedLawyers: any } | undefined;
   DetailScreen: { user: UserModel };
   CommentsScreen: { user: UserModel };
   NewCommentScreen: { user: UserModel };
   NewSocialScreen: undefined;
+  FilterScreen: { lawyerList: any };
+  SortScreen: { lawyerList: any };
+  SavedScreen: { lawyerList: any };
 };
 
-
-const FeedStack = createStackNavigator<FeedStackParamList>();
+const FeedStack = createStackNavigator<MainStackParamList>();
 const ChatStack = createStackNavigator();
 const Tab = createMaterialBottomTabNavigator();
 
@@ -36,7 +40,6 @@ function FeedStackScreen() {
       />
     </FeedStack.Navigator>
   );
-
 }
 
 function ChatStackScreen() {
@@ -59,16 +62,24 @@ function ChatStackScreen() {
 
 export function MainStackScreen() {
   return (
-   
-      <Tab.Navigator activeColor={"#000000"} labeled={false} barStyle={{ backgroundColor: '#DBDBDB', paddingTop: 5 }} >
-        <Tab.Screen name = "Home"  component={FeedStackScreen} options={{tabBarIcon: "home"}} />
-        <Tab.Screen name = "Comments" component={ChatStackScreen} options={{tabBarIcon: "chat" }} />
-      </Tab.Navigator>
-   
+    <Tab.Navigator
+      activeColor={"#000000"}
+      labeled={false}
+      barStyle={{ backgroundColor: "#DBDBDB", paddingTop: 5 }}
+    >
+      <Tab.Screen
+        name="Home"
+        component={FeedStackScreen}
+        options={{ tabBarIcon: "home" }}
+      />
+      <Tab.Screen
+        name="Comments"
+        component={ChatStackScreen}
+        options={{ tabBarIcon: "chat" }}
+      />
+    </Tab.Navigator>
   );
 }
-
-
 
 /**
  * MainStackScreen()
