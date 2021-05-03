@@ -41,9 +41,9 @@ export default function NewCommentScreen({ navigation, route }: Props) {
 
   const Bar = () => {
     return (
-      <Appbar.Header>
+      <Appbar.Header style={{backgroundColor: "#FFFFFF"}}>
         <Appbar.Action onPress={navigation.goBack} icon="close" />
-        <Appbar.Content title="Messages Screen" />
+        <Appbar.Content title={<Text style={{fontSize: 20, color: "#00F0FF"}}>Courtroom</Text>}/>
       </Appbar.Header>
     );
   };

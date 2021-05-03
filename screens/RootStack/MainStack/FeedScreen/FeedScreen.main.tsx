@@ -60,7 +60,7 @@ export default function FeedScreen({ navigation, route }: Props) {
 
   if (isCilent === true){
     useEffect(() => {
-      console.log("creating lsist of lawyers");
+      console.log("creating list of lawyers");
       const db = firebase.firestore();
       const unsubscribe = db
         .collection("lawyers")
@@ -133,7 +133,7 @@ export default function FeedScreen({ navigation, route }: Props) {
     //   actors.length == 0 || overlapFound(actors, item.actors);
     if (meetsSearchCriteria) {
       return (
-        <Card onPress={onPress} style={{ margin: 16 }}>
+        <Card onPress={onPress} style={styles.cardStyle}>
           <Card.Title
             title={item.userNickname}
             subtitle={
@@ -154,12 +154,12 @@ export default function FeedScreen({ navigation, route }: Props) {
 
   const Bar = () => {
     return (
-      <Appbar.Header>
+      <Appbar.Header style={{backgroundColor: "#FFFFFF"}}>
         <Appbar.Action
           icon="exit-to-app"
           onPress={() => firebase.auth().signOut()}
         />
-        <Appbar.Content title="Courtroom" />
+        <Appbar.Content title={<Text style={{fontSize: 20, color: "#00F0FF"}}>Courtroom</Text>} />
         <Appbar.Action
           icon="account"
           onPress={() => {
@@ -184,18 +184,19 @@ export default function FeedScreen({ navigation, route }: Props) {
 
   return (
     <>
-      <Bar />
+      <Bar/>
       <View style={styles.container}>
         <Searchbar
-          placeholder="Type Here..."
+          placeholder="Search..."
           onChangeText={setSearch}
           value={search}
+          style={styles.searchBar}
         />
         <View style={{ flexDirection: "row", alignSelf: "center" }}>
-          <Button onPress={selectedSortButton}>Sort</Button>
-          <Button onPress={selectedFilterButton}>Filter</Button>
+          <Button onPress={selectedSortButton} style={styles.sortingButtons}><Text style={{color: "#000000"}}>Sort</Text></Button>
+          <Button onPress={selectedFilterButton} style={styles.sortingButtons}><Text style={{color: "#000000"}}>Filter</Text></Button>
         </View>
-        <Button onPress={selectedSavedButton}>Saved Users</Button>
+        <Button onPress={selectedSavedButton} style={styles.savedUsersButton}> <Text style={{color: "#000000"}}>Saved Users</Text></Button>
         <FlatList
           data={filteredLawyers}
           renderItem={renderSocial}

@@ -54,7 +54,7 @@ export default function SignUpScreen({ navigation }: Props) {
   return (
     <>
       <SafeAreaView style={styles.container}>
-        <Text style={{marginLeft:20, fontSize: 20, }}>Courtroom</Text>
+        <Text style={{marginLeft:20, fontSize: 20, color: "#00F0FF" }}>Courtroom</Text>
         <ScrollView
           style={styles.container}
           keyboardShouldPersistTaps="never"
@@ -77,11 +77,11 @@ export default function SignUpScreen({ navigation }: Props) {
           <Button
             mode="contained"
             onPress={signUp}
-            style={{ marginTop: 20 }}
+            style={{ marginTop: 40, borderRadius: 40, height: 40, backgroundColor: "#1FAEFF", width: 250, alignSelf: 'center', shadowColor: "#FFFFFF" }}
             loading={loading}
             dark={true}
           >
-            Create an Account
+            Register
           </Button>
           <Button
             onPress={() => navigation.navigate("SignInScreen")}

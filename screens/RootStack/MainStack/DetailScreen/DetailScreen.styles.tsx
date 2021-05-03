@@ -9,11 +9,16 @@ export const styles = StyleSheet.create({
     margin: 20,
   },
   subtitle: {
-    color: "gray",
+    color: "#000000",
+    fontSize: 16
   },
   image: {
-    height: 200,
-    width: "100%",
+    height: 150,
+    width: 150,
     marginBottom: 20,
+    borderRadius: 75,
+    borderColor: "#000000",
+    borderWidth: 1,
+    alignSelf: 'center'
   },
 });

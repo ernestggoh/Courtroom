@@ -22,8 +22,8 @@ export default function CommentsScreen({ navigation, route }: Props) {
 
   const Bar = () => {
     return (
-      <Appbar.Header>
-        <Appbar.Content title="Comments" />
+      <Appbar.Header style={{backgroundColor: "#FFFFFF"}}>
+        <Appbar.Content title={<Text style={{fontSize: 20, color: "#00F0FF"}}>Courtroom</Text>} />
         <Appbar.Action
           icon="plus"
           onPress={() => {

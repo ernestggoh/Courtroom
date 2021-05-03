@@ -104,7 +104,7 @@ export default function SignInScreen({ navigation }: Props) {
     <>
       
       <SafeAreaView style={styles.container}>
-        <Text style={{marginLeft:20, fontSize: 20, }}>Courtroom</Text>
+        <Text style={{marginLeft:20, fontSize: 20, color: "#00F0FF" }}>Courtroom</Text>
         <ScrollView
           style={styles.container}
           keyboardShouldPersistTaps="never"
@@ -138,7 +138,7 @@ export default function SignInScreen({ navigation }: Props) {
           <Button
             mode="contained"
             onPress={signIn}
-            style={{ marginTop: 40 }}
+            style={{ marginTop: 40, borderRadius: 40, height: 40, backgroundColor: "#00F0FF", width: 200, alignSelf: 'center', shadowColor: "#FFFFFF"}}
             loading={loading}
             dark={true}
           >

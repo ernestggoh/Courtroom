@@ -233,7 +233,7 @@ export default function NewSocialScreen({ navigation }: Props) {
 
   const Bar = () => {
     return (
-      <Appbar.Header>
+      <Appbar.Header style={{backgroundColor: "#FFFFFF"}}>
         <Appbar.Action onPress={navigation.goBack} icon="close" />
         <Appbar.Content title="Your Portfolio" />
       </Appbar.Header>
@@ -312,7 +312,7 @@ export default function NewSocialScreen({ navigation }: Props) {
         <Button
           mode="contained"
           onPress={saveEvent}
-          style={{ marginTop: 20 }}
+          style={styles.button}
           loading={loading}
         >
           Update Portfolio
