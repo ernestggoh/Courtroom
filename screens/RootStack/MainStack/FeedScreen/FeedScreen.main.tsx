@@ -21,28 +21,83 @@ export default function FeedScreen({ navigation, route }: Props) {
   // I am starting with Cilent Point of View, displaying Lawyers
   /*TODO insert if-else clause to deal with lawyer point of view */
   const [filteredLawyers, setFilteredLawyers] = useState<UserModel[]>([]);
-  const [lawyers, setLawyers] = useState<UserModel[]>([]);
+  const [user, setUsers] = useState<UserModel[]>([]);
   const [search, setSearch] = useState("");
-
+  const [isCilent, setIsCilent] = useState<boolean | null>(true);
   const currentUserId = firebase.auth().currentUser!.uid;
 
+  // checking if user is a lawyer
   useEffect(() => {
+
     const db = firebase.firestore();
     const unsubscribe = db
       .collection("lawyers")
-      .orderBy("userNickname", "asc")
+      .where("owner", "==", currentUserId)
       .onSnapshot((querySnapshot) => {
-        var newLawyers: UserModel[] = [];
         querySnapshot.forEach((lawyer) => {
-          const newLawyer = lawyer.data() as UserModel;
-          newLawyer.id = lawyer.id;
-          newLawyers.push(newLawyer);
+            console.log("DOES THIS RUN 1");
+            setIsCilent(false);
         });
-        setLawyers(newLawyers);
-        setFilteredLawyers(newLawyers);
       });
     return unsubscribe;
   }, []);
+
+// checking if user is a cilent
+  useEffect(() => {
+
+    const db = firebase.firestore();
+    const unsubscribe = db
+      .collection("cilents")
+      .where("owner", "==", currentUserId)
+      .onSnapshot((querySnapshot) => {
+        querySnapshot.forEach((cilent) => {
+            console.log("DOES THIS RUN 2");
+            setIsCilent(true);
+        });
+      });
+    return unsubscribe;
+  }, []);
+
+  if (isCilent === true){
+    useEffect(() => {
+      console.log("creating lsist of lawyers");
+      const db = firebase.firestore();
+      const unsubscribe = db
+        .collection("lawyers")
+        .orderBy("userNickname", "asc")
+        .onSnapshot((querySnapshot) => {
+          var newLawyers: UserModel[] = [];
+          querySnapshot.forEach((lawyer) => {
+            const newLawyer = lawyer.data() as UserModel;
+            newLawyer.id = lawyer.id;
+            newLawyers.push(newLawyer);
+          });
+          setUsers(newLawyers);
+          setFilteredLawyers(newLawyers);
+        });
+      return unsubscribe;
+    }, [isCilent]);
+  } else {
+    useEffect(() => {
+      console.log("creating lsist of cilents");
+      const db = firebase.firestore();
+      const unsubscribe = db
+        .collection("cilents")
+        .orderBy("userNickname", "asc")
+        .onSnapshot((querySnapshot) => {
+          var newCilents: UserModel[] = [];
+          querySnapshot.forEach((cilent) => {
+            const newCilent = cilent.data() as UserModel;
+            newCilent.id = cilent.id;
+            newCilents.push(newCilent);
+          });
+          setUsers(newCilents);
+          setFilteredLawyers(newCilents);
+        });
+      return unsubscribe;
+    }, [isCilent]);
+  }
+
 
   useEffect(() => {
     if (route.params?.updatedLawyers) {
@@ -58,10 +113,10 @@ export default function FeedScreen({ navigation, route }: Props) {
     navigation.navigate("SortScreen", { lawyerList: filteredLawyers });
   };
   const selectedSavedButton = () => {
-    navigation.navigate("SavedScreen", { lawyerList: lawyers });
+    navigation.navigate("SavedScreen", { lawyerList: user });
   };
   const selectedFilterButton = () => {
-    navigation.navigate("FilterScreen", { lawyerList: lawyers });
+    navigation.navigate("FilterScreen", { lawyerList: user });
   };
 
   const renderSocial = ({ item }: { item: UserModel }) => {
@@ -82,7 +137,7 @@ export default function FeedScreen({ navigation, route }: Props) {
           <Card.Title
             title={item.userNickname}
             subtitle={
-              item.userLocation + " • " + item.userTypeOfCase + " Units"
+              item.userLocation + " • " + item.userTypeOfCase
             }
             left={(props) => (
               <Avatar.Image size={50} source={{ uri: item.userImage }} />
@@ -120,7 +175,7 @@ export default function FeedScreen({ navigation, route }: Props) {
       <View>
         <Text style={{ color: "gray", margin: 30, textAlign: "center" }}>
           {
-            "Welcome! To get started, use the plus button in the top-right corner to create a new social."
+            "Welcome! To get started, use the plus button in the top-right corner to create a profile."
           }
         </Text>
       </View>

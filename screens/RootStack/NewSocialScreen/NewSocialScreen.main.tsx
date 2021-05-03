@@ -17,11 +17,7 @@ import "firebase/firestore";
 import { UserModel } from "../../../models/user";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../RootStackScreen";
-<<<<<<< HEAD
-//import * as WebBrowser from "expo-web-browser";
-=======
 // import * as WebBrowser from "expo-web-browser";
->>>>>>> 46bdbf20b11821d248514b9cada51d2aaf2fd01a
 interface Props {
   navigation: StackNavigationProp<RootStackParamList, "NewSocialScreen">;
 }
@@ -48,71 +44,17 @@ export default function NewSocialScreen({ navigation }: Props) {
   const [cilentProfiles, setCilentProfiles] = useState<string[]>([]);
   const [lawyerProfiles, setLawyerProfiles] = useState<string[]>([]);
   const [checked, setChecked] = React.useState("first");
+  const [cased, setCased] = useState("first");
   var do1 = true;
-  // const handlePressButtonAsync = async () => {
-  //   let result = await WebBrowser.openBrowserAsync(
-  //     "https://calcentral.berkeley.edu/dashboard"
-  //   );
-  //   setLink(result);
-  // };
+
 
 
   const currentUserId = firebase.auth().currentUser!.uid;
   const db = firebase.firestore();
-  // const getCilents = async () => {
-  //   console.log("picking image");
-  //   await   db.collection("lawyers").where("owner", "==", currentUserId)
-  //   .get()
-  //   .then((querySnapshot) => {
-  //       var lawyerProfilesIDs: string[] = [];
-  //       querySnapshot.forEach((lawyer) => {
-  //           // doc.data() is never undefined for query doc snapshots
-  //           // console.log(doc.id, " => ", doc.data());
-  //           const newLawyer = lawyer.data() as UserModel;
-  //           setLawyerProfileExists(true);
-  //           setNickname(newLawyer.userNickname);
-  //           setAbout(newLawyer.userAbout);
-  //           setImage(newLawyer.userImage);
-  //           setTypeOfCase(newLawyer.userTypeOfCase);
-  //           setLocation(newLawyer.userLocation);
-  //           lawyerProfilesIDs.push(lawyer.id);
-  //       });
-  //       setLawyerProfiles(lawyerProfilesIDs);
-  //   })
-  //   .catch((error) => {
-  //       console.log("Error getting documents: ", error);
-  //   });
-  // };
-  // getCilents();
-  // if (do1) {
-  //   console.log("doing this 1");
-  //   db.collection("lawyers").where("owner", "==", currentUserId)
-  //     .get()
-  //     .then((querySnapshot) => {
-  //         var lawyerProfilesIDs: string[] = [];
-  //         querySnapshot.forEach((lawyer) => {
-  //             // doc.data() is never undefined for query doc snapshots
-  //             // console.log(doc.id, " => ", doc.data());
-  //             const newLawyer = lawyer.data() as UserModel;
-  //             console.log(newLawyer.userNickname);
-  //             setLawyerProfileExists(true);
-  //             setNickname(newLawyer.userNickname);
-  //             setAbout(newLawyer.userAbout);
-  //             setImage(newLawyer.userImage);
-  //             setTypeOfCase(newLawyer.userTypeOfCase);
-  //             setLocation(newLawyer.userLocation);
-  //             lawyerProfilesIDs.push(lawyer.id);
-  //         });
-  //         setLawyerProfiles(lawyerProfilesIDs);
-  //     })
-  //     .catch((error) => {
-  //         console.log("Error getting documents: ", error);
-  //     });
-  //   do1 = false;
-  // }
 
-  console.log("doing this 1");
+  useEffect(() => {setTypeOfCase(cased);}, [cased]);
   
+// checking if user is a lawyer
   useEffect(() => {
     const db = firebase.firestore();
     const unsubscribe = db
@@ -121,8 +63,6 @@ export default function NewSocialScreen({ navigation }: Props) {
       .onSnapshot((querySnapshot) => {
         var lawyerProfilesIDs: string[] = [];
         querySnapshot.forEach((lawyer) => {
-            // doc.data() is never undefined for query doc snapshots
-            // console.log(doc.id, " => ", doc.data());
             const newLawyer = lawyer.data() as UserModel;
             console.log(newLawyer.userNickname);
             setLawyerProfileExists(true);
@@ -130,6 +70,7 @@ export default function NewSocialScreen({ navigation }: Props) {
             setAbout(newLawyer.userAbout);
             setImage(newLawyer.userImage);
             setTypeOfCase(newLawyer.userTypeOfCase);
+            setCased(newLawyer.userTypeOfCase);
             setLocation(newLawyer.userLocation);
             setChecked("lawyer");
             lawyerProfilesIDs.push(lawyer.id);
@@ -139,7 +80,8 @@ export default function NewSocialScreen({ navigation }: Props) {
       });
     return unsubscribe;
   }, []);
-  
+
+// checking if user is a cilent
   useEffect(() => {
     const db = firebase.firestore();
     const unsubscribe = db
@@ -156,6 +98,7 @@ export default function NewSocialScreen({ navigation }: Props) {
           setAbout(newCilent.userAbout);
           setImage(newCilent.userImage);
           setTypeOfCase(newCilent.userTypeOfCase);
+          setCased(newCilent.userTypeOfCase);
           setLocation(newCilent.userLocation);
           setChecked("cilent");
           cilentProfilesIDs.push(cilents.id);
@@ -205,13 +148,17 @@ export default function NewSocialScreen({ navigation }: Props) {
 
   // This method is called AFTER all fields have been validated.
   const saveEvent = async () => {
+    // console.log("printing type of case");
+    // console.log(cased);
+    // setTypeOfCase(cased);
+    // console.log(typeOfCase);
     if (!nickname) {
       showError("Please enter a nickname.");
       return;
     } else if (!location) {
       showError("Please enter your location.");
       return;
-    } else if (!typeOfCase) {
+    } else if (typeOfCase === "first") {
       showError("Please enter your type of case.");
       return;
     } else if (!about) {
@@ -227,17 +174,19 @@ export default function NewSocialScreen({ navigation }: Props) {
     try {
       // Delete all existing portfolios
       // deleting cilent
-      // cilentProfiles.forEach(cilentProfile => {
-      //   db.collection("cilents").doc(cilentProfile).delete().then(() => {
-      //     console.log("Document successfully deleted!");
-      //   }).catch((error) => {
-      //       console.error("Error removing document: ", error);
-      //   });
-      // });
+
+      cilentProfiles.forEach(cilentProfile => {
+        console.log("printing for cilent deletion");
+        db.collection("cilents").doc(cilentProfile).delete().then(() => {
+          console.log("Document successfully deleted!");
+        }).catch((error) => {
+            console.error("Error removing document: ", error);
+        });
+      });
       // deleting lawyers
 
       lawyerProfiles.forEach(lawyerProfile => {
-        console.log("printing for deletion");
+        console.log("printing for lawyer deletion");
         console.log(lawyerProfile);
         db.collection("lawyers").doc(lawyerProfile).delete().then(() => {
           console.log("Document successfully deleted!");
@@ -251,7 +200,9 @@ export default function NewSocialScreen({ navigation }: Props) {
       console.log("getting file object");
       const object: Blob = (await getFileObjectAsync(image)) as Blob;
       // Generate a brand new doc ID by calling .doc() on the socials node.
-      const userRef = firebase.firestore().collection("lawyers").doc();
+      console.log("checked is");
+      console.log(checked);
+      const userRef = (checked === "cilent") ? firebase.firestore().collection("cilents").doc() : firebase.firestore().collection("lawyers").doc();
       console.log("putting file object");
       const result = await firebase
         .storage()
@@ -318,13 +269,33 @@ export default function NewSocialScreen({ navigation }: Props) {
           onChangeText={(major) => setLocation(major)}
           style={{ backgroundColor: "white", marginBottom: 10 }}
         />
-        <TextInput
+        {/* <TextInput
           label="Type of Case"
           value={typeOfCase}
           onChangeText={(text) => setTypeOfCase(text)}
           style={{ backgroundColor: "white", marginBottom: 10 }}
-        />
+        /> */}
+        <RadioButton.Group onValueChange={newValue => setCased(newValue)} value={cased}>
+        <View>
+          <Text>What Type of Case?</Text>
+        </View>
+        <View>
+          <Text>Civil</Text>
+          <RadioButton value="Civil" color="red"/>
+        </View>
+        <View>
+          <Text>Criminal</Text>
+          <RadioButton value="Criminal" color="red"/>
+        </View>
+        <View>
+          <Text>Immigration</Text>
+          <RadioButton value="Immigration" color="red"/>
+        </View>
+      </RadioButton.Group>
         <RadioButton.Group onValueChange={newValue => setChecked(newValue)} value={checked}>
+        <View>
+          <Text>Are you a Cilent/Lawyer?</Text>
+        </View>
         <View>
           <Text>Cilent</Text>
           <RadioButton value="cilent" color="red"/>

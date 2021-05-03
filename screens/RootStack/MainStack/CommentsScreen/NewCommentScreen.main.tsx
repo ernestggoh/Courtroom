@@ -1,6 +1,6 @@
 import { RouteProp } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import firebase from "firebase/app";
 import "firebase/firestore";
 import { ScrollView, Image, Text, View, FlatList } from "react-native";
@@ -8,65 +8,42 @@ import { Appbar, Button, Card, TextInput } from "react-native-paper";
 import { MainStackParamList } from "../MainStackScreen";
 import { styles } from "./CommentsScreen.styles";
 import { CommentModel } from "../../../../models/comment.js";
+import { GiftedChat } from 'react-native-gifted-chat';
 
 interface Props {
   navigation: StackNavigationProp<MainStackParamList, "CommentsScreen">;
   route: RouteProp<MainStackParamList, "CommentsScreen">;
 }
 
-export default function NewCommentScreen({ route, navigation }: Props) {
-  const { social } = route.params;
-  // Event details.
-  const [comment, setComment] = useState("");
+export default function NewCommentScreen({ navigation, route }: Props) {
+  const [messages, setMessages] = useState<any[]>([]);
 
-  // Snackbar.
-  const [message, setMessage] = useState("");
-  // Loading state for submit button
-  const [loading, setLoading] = useState(false);
-  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    setMessages([
+      {
+        _id: 1,
+        text: 'Hello developer',
+        createdAt: new Date(),
+        user: {
+          _id: 2,
+          name: 'React Native',
+          avatar: 'https://placeimg.com/140/140/any',
+        },
+      },
+    ])
+  }, [])
 
-  // Code for SnackBar (from docs)
-  const onDismissSnackBar = () => setVisible(false);
-  const showError = (error: string) => {
-    setMessage(error);
-    setVisible(true);
-  };
+  const onSend = useCallback((messages = []) => {
+    setMessages(previousMessages => GiftedChat.append(previousMessages, messages))
+  }, [])
 
-  // This method is called AFTER all fields have been validated.
-  const saveEvent = async () => {
-    if (!comment) {
-      showError("Please enter a comment.");
-      return;
-    } else {
-      setLoading(true);
-    }
 
-    try {
-      // Generate a brand new doc ID by calling .doc() on the socials node.
-      const socialRef = firebase.firestore().collection("comments").doc();
-
-      const doc: CommentModel = {
-        commentContent: comment,
-        socialid: social.id || "",
-        owner: firebase.auth().currentUser!.uid,
-        interested: {},
-        upvotes: 0,
-      };
-      console.log("setting download url");
-      await socialRef.set(doc);
-      setLoading(false);
-      navigation.goBack();
-    } catch (error) {
-      setLoading(false);
-      showError(error.toString());
-    }
-  };
 
   const Bar = () => {
     return (
       <Appbar.Header>
         <Appbar.Action onPress={navigation.goBack} icon="close" />
-        <Appbar.Content title="Schedule Rater" />
+        <Appbar.Content title="Messages Screen" />
       </Appbar.Header>
     );
   };
@@ -74,22 +51,16 @@ export default function NewCommentScreen({ route, navigation }: Props) {
   return (
     <>
       <Bar />
-      <View style={{ ...styles.container, padding: 20 }}>
-        <TextInput
-          label="Comment"
-          value={comment}
-          onChangeText={(text) => setComment(text)}
-          style={{ backgroundColor: "white", marginBottom: 10 }}
-        />
-        <Button
-          mode="contained"
-          onPress={saveEvent}
-          style={{ marginTop: 20 }}
-          loading={loading}
-        >
-          Save Comment
-        </Button>
-      </View>
+      <GiftedChat
+      messages={messages}
+      onSend={(messages: any) => onSend(messages)}
+      user={{
+        _id: 1,
+      }}
+    />
+      {/* <View style={{ ...styles.container, padding: 20 }}>
+        <Text>This is our messages screen</Text>
+      </View> */}
     </>
   );
 }
